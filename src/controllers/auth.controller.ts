@@ -4,16 +4,17 @@ import jwt from "jsonwebtoken";
 import { pool } from "../db";
 
 export const register = async (req: Request, res: Response) => {
-    const { email, password } = req.body;
+    const { email, password, name } = req.body;
 
     const hashed = await bcrypt.hash(password, 10);
 
-    const result = await pool.query("SELECT register_user($1, $2) AS id", [
+    const result = await pool.query("SELECT register_user($1, $2, $3) AS id", [
         email,
         hashed,
+        name,
     ]);
 
-    res.json({ userId: result.rows[0].id });
+    res.json({ userId: result.rows[0].id, name: result.rows[0].name });
 };
 
 export const login = async (req: Request, res: Response) => {
